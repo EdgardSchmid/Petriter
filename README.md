@@ -43,4 +43,51 @@ git clone https://github.com/seu-usuario/petriter.git
 cd petriter
 
 # Abra o index.html no navegador
-# Petriter
+(se houver dependências de Node.js ou outra tecnologia, pode-se complementar aqui)
+
+##▶ Como usar
+
+Abra o projeto no navegador.
+
+Explore o mapa interativo de Petrópolis.
+
+Clique nos marcadores para visualizar informações dos pontos turísticos.
+
+Acompanhe notícias e previsões do tempo em tempo real.
+
+##📐 Metodologia
+
+O desenvolvimento foi dividido nas seguintes etapas:
+
+Levantamento de conteúdo: seleção de pontos turísticos e históricos.
+
+Design de interface: prototipagem no Figma.
+
+Implementação do mapa: uso da API Google Maps com marcadores customizados.
+
+Customização visual: aplicação de estilos via Snazzy Maps.
+
+Integração de APIs externas: meteorologia, alertas e notícias locais.
+
+Testes e validação: simulação com usuários (moradores e turistas).
+
+##👥 Equipe
+
+Conrado Wayand Barros Medeiros Batista
+
+Edgard Antônio Kreischer Schimid
+
+Luiz Miguel Costa Valentim
+
+Pedro Henrique Lima Giardini
+
+Instrutores-orientadores:
+
+Arthur Carvalho Giangiarulo Lopes
+
+Jordânia
+
+##📄 Licença
+
+Este projeto foi desenvolvido como parte do Projeto Integrador – Curso Técnico em Informática (Firjan SENAI Petrópolis).
+Licença: MIT
