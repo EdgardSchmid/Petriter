@@ -7,7 +7,6 @@ A proposta é criar uma **plataforma web georreferenciada** para valorização c
 - [Sobre](#-sobre)  
 - [Funcionalidades](#-funcionalidades)  
 - [Tecnologias](#-tecnologias)  
-- [Instalação](#-instalação)  
 - [Como usar](#-como-usar)  
 - [Metodologia](#-metodologia)  
 - [Equipe](#-equipe)  
@@ -34,15 +33,49 @@ Com uma interface intuitiva e moderna, o projeto pretende **facilitar a experiê
 - **Figma** (design e prototipagem)  
 - **APIs externas** (meteorologia e notícias)  
 
-## 🔧 Instalação  
-<details>
-<summary>Clique para expandir</summary>
+## ▶ Como usar
 
-```bash
-# Clone este repositório
-git clone https://github.com/seu-usuario/petriter.git
+Abra o projeto no navegador.
 
-# Acesse a pasta do projeto
-cd petriter
+Explore o mapa interativo de Petrópolis.
 
-# Abra o index.html no navegador
+Clique nos marcadores para visualizar informações dos pontos turísticos.
+
+Acompanhe notícias e previsões do tempo em tempo real.
+
+## 📐 Metodologia
+
+O desenvolvimento foi dividido nas seguintes etapas:
+
+Levantamento de conteúdo: seleção de pontos turísticos e históricos.
+
+Design de interface: prototipagem no Figma.
+
+Implementação do mapa: uso da API Google Maps com marcadores customizados.
+
+Customização visual: aplicação de estilos via Snazzy Maps.
+
+Integração de APIs externas: meteorologia, alertas e notícias locais.
+
+Testes e validação: simulação com usuários (moradores e turistas).
+
+## 👥 Equipe
+
+Conrado Wayand Barros Medeiros Batista
+
+Edgard Antônio Kreischer Schimid
+
+Luiz Miguel Costa Valentim
+
+Pedro Henrique Lima Giardini
+
+Instrutores-orientadores:
+
+Arthur Carvalho Giangiarulo Lopes
+
+Jordânia
+
+## 📄 Licença
+
+Este projeto foi desenvolvido como parte do Projeto Integrador – Curso Técnico em Informática (Firjan SENAI Petrópolis).
+Licença: MIT
