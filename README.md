@@ -45,7 +45,7 @@ cd petriter
 # Abra o index.html no navegador
 (se houver dependências de Node.js ou outra tecnologia, pode-se complementar aqui)
 
-##▶ Como usar
+▶ Como usar
 
 Abra o projeto no navegador.
 
@@ -55,7 +55,7 @@ Clique nos marcadores para visualizar informações dos pontos turísticos.
 
 Acompanhe notícias e previsões do tempo em tempo real.
 
-##📐 Metodologia
+📐 Metodologia
 
 O desenvolvimento foi dividido nas seguintes etapas:
 
@@ -71,7 +71,7 @@ Integração de APIs externas: meteorologia, alertas e notícias locais.
 
 Testes e validação: simulação com usuários (moradores e turistas).
 
-##👥 Equipe
+👥 Equipe
 
 Conrado Wayand Barros Medeiros Batista
 
@@ -87,7 +87,7 @@ Arthur Carvalho Giangiarulo Lopes
 
 Jordânia
 
-##📄 Licença
+📄 Licença
 
 Este projeto foi desenvolvido como parte do Projeto Integrador – Curso Técnico em Informática (Firjan SENAI Petrópolis).
 Licença: MIT
