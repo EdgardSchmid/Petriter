@@ -33,6 +33,7 @@ Com uma interface intuitiva e moderna, o projeto pretende **facilitar a experiê
 - **Figma** (design e prototipagem)  
 - **APIs externas** (meteorologia e notícias)  
 
+
 ## ▶ Como usar
 
 Abra o projeto no navegador.
@@ -65,7 +66,7 @@ Conrado Wayand Barros Medeiros Batista
 
 Edgard Antônio Kreischer Schimid
 
-Luiz Miguel Costa Valentim
+João Victor Gravelos Saar
 
 Pedro Henrique Lima Giardini
 
@@ -73,7 +74,9 @@ Instrutores-orientadores:
 
 Arthur Carvalho Giangiarulo Lopes
 
-Jordânia
+Felippe do Nascimento
+
+Jordania da Silva Cler
 
 ## 📄 Licença
 
