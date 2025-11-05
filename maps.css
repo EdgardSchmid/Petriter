@@ -1,0 +1,190 @@
+/* ===== VARIÁVEIS DE COR E FONTES ===== */
+:root {
+  --background-color: #FFFFFF;     /* fundo geral */
+  --panel-background: #FFFFFF;     /* painel lateral */
+  --text-color-primary: #5C5C5C;
+  --text-color-secondary: #AEAEAE; /* Cor cinza para a lanterna */
+  --border-color: gold;            /* bordas douradas */
+  --brand-color: #6A5A4D;           /* botões e logo marrom */
+  --hover-color-beige: #aa8b69;    /* NOVA COR: Bege para o hover do menu */
+  --font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ===== RESET E ESTILOS GLOBAIS ===== */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  overflow: hidden;
+  color: var(--text-color-primary);
+}
+
+/* ===== ÍCONES DO GOOGLE FONTS ===== */
+.material-symbols-outlined {
+  color: #964B00;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  font-size: 22px;
+}
+
+/* ===== HEADER / NAVBAR ===== */
+.header {
+  display: flex;
+  /* justify-content foi removido para permitir o alinhamento customizado */
+  align-items: center;
+  gap: 24px; /* Espaçamento entre logo, menu e a parte da direita */
+  padding: 0 24px;
+  height: 60px;
+  width: 100%;
+  border-bottom: 0.5px solid var(--border-color);
+  background-color: var(--background-color);
+}
+
+.logo-container {
+  /* Mantém a logo sem encolher */
+  flex-shrink: 0; 
+}
+
+.logo-icon {
+  color: #964B00;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 40px; /* AUMENTADO: Espaçamento entre as palavras do menu */
+  margin-right: auto; /* MÁGICA: Empurra todo o resto para a direita */
+}
+
+.nav-menu a, .nav-menu button {
+  text-decoration: none;
+  color: #964B00;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-family);
+}
+
+.nav-menu a:hover, .nav-menu button:hover {
+  color: var(--hover-color-beige); /* ALTERADO: Cor do hover para bege */
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0; /* Impede que os ícones da direita encolham */
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border-color); /* borda dourada */
+  border-radius: 6px;
+  padding: 6px 12px;
+  background-color: var(--background-color); /* fundo branco */
+}
+
+.search-bar .material-symbols-outlined {
+  color: #964B00;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  width: 150px;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-color-secondary);
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-icon {
+  color: var(--brand-color); /* ícones marrom */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-icon:hover {
+  color: gold; /* hover dourado */
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
+.main-content {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+#map-container {
+  flex-grow: 1;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+.map-controls button {
+  border: none;
+  background-color: var(--brand-color); /* botão marrom */
+  padding: 5px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.map-controls button.active {
+  background-color: gold; /* botão ativo dourado */
+  color: var(--brand-color); /* texto marrom */
+}
+
+/* ===== PAINEL LATERAL DIREITO ===== */
+.info-panel {
+  width: 450px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border-color); /* borda dourada */
+  background-color: var(--panel-background); /* fundo branco */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-color-secondary);
+}
+
+.empty-state .empty-state-icon {
+  font-size: 64px; /* AUMENTADO: Tamanho do ícone da lanterna */
+  color: var(--text-color-secondary); /* ALTERADO: Cor para cinza */
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 15px;
+}
