@@ -1,92 +1,152 @@
-// --- Interesses disponíveis ---
-const availableInterests = ['História','Natureza','Fotografia','Culinária','Música','Arte','Esportes','Literatura','Cinema','Tecnologia','Viagem','Aventura','Cultura','Arquitetura','Design'];
-let selectedInterests = ['História','Natureza','Fotografia'];
+/* =========================================================
+   CONFIGURAÇÃO DE TAGS DISPONÍVEIS
+   ========================================================= */
+   
+const AVAILABLE_TAGS = [
+    // EIXOS GASTRONÔMICOS
+    "Chocolate Artesanal",
+    "Cervejarias",
+    "Cafés Históricos",
+    "Restaurantes Coloniais",
 
-// --- Inicializar perfil ---
-window.onload = function() {
-    const name = localStorage.getItem('userName') || 'Visitante';
-    const email = localStorage.getItem('userEmail') || 'sememail@teste.com';
+    // EIXOS HISTÓRICOS
+    "Rota Imperial",
+    "Brasil Império",
+    "Arquitetura Alemã",
+    "Arquitetura Colonial",
 
-    document.getElementById('name').value = name;
-    document.getElementById('email').value = email;
-    document.getElementById('profile-display-name').textContent = name;
+    // EIXOS NATURAIS
+    "Cachoeiras",
+    "Trilhas Secretas",
+    "Mirantes Pouco Conhecidos",
+    "Astroturismo",
+    "Observação Noturna",
 
-    renderInterests();
-    document.getElementById('name').addEventListener('input', updateDisplayName);
-};
+    // EIXOS CULTURAIS
+    "Feiras Artesanais",
+    "Ateliês Locais",
+    "Eventos de Rua",
+    "Centros Culturais Alternativos",
 
-// --- Exibir interesses ---
-function renderInterests() {
-    const container = document.getElementById('interests-container');
-    container.innerHTML = '';
-    availableInterests.forEach(interest => {
-        const tag = document.createElement('div');
-        tag.className = 'interest-tag';
-        tag.textContent = interest;
-        if(selectedInterests.includes(interest)) tag.classList.add('selected');
-        tag.addEventListener('click', () => toggleInterest(interest));
-        container.appendChild(tag);
-    });
-}
+    // EIXOS RELIGIOSOS E MÍSTICOS
+    "Igrejas Históricas",
+    "Espaços de Meditação",
+    "Roteiros Espirituais",
 
-function toggleInterest(interest) {
-    const index = selectedInterests.indexOf(interest);
-    if(index > -1) selectedInterests.splice(index, 1);
-    else selectedInterests.push(interest);
-    renderInterests();
-}
+    // TECNOLÓGICOS
+    "Inovação",
+    "Museus Científicos",
+    "História da Tecnologia"
+];
 
-// --- Avatar ---
-function handleAvatarUpload(event) {
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+function handleAvatarUpload(event){
     const file = event.target.files[0];
-    if(file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('avatar').innerHTML = `<img src="${e.target.result}" alt="Avatar">`;
-        };
-        reader.readAsDataURL(file);
+    if(!file) return;
+
+    const avatarImg = document.getElementById('avatar-img');
+    const placeholder = document.getElementById('avatar-placeholder');
+    avatarImg.src = URL.createObjectURL(file);
+    avatarImg.style.display = "block";
+    placeholder.style.display = "none";
+}
+
+/* =========================================================
+   TAG SYSTEM
+   ========================================================= */
+const tagsContainer = document.getElementById("tags-container");
+let selectedTags = [];
+
+function loadTags(){
+    const savedTags = localStorage.getItem("selectedTags");
+    if(savedTags) selectedTags = JSON.parse(savedTags);
+    renderTags();
+}
+
+function renderTags(){
+    tagsContainer.innerHTML = "";
+    AVAILABLE_TAGS.forEach(tag => {
+        const tagElement = document.createElement("div");
+        tagElement.classList.add("tag");
+        tagElement.textContent = tag;
+        if(selectedTags.includes(tag)) tagElement.classList.add("selected");
+        tagElement.addEventListener("click", () => toggleTag(tag));
+        tagsContainer.appendChild(tagElement);
+    });
+}
+
+function toggleTag(tag){
+    if(selectedTags.includes(tag)){
+        selectedTags = selectedTags.filter(t => t!==tag);
+    } else {
+        selectedTags.push(tag);
     }
+    localStorage.setItem("selectedTags", JSON.stringify(selectedTags));
+    renderTags();
 }
 
-// --- Atualizar nome no display ---
-function updateDisplayName() {
-    const nameInput = document.getElementById('name');
-    document.getElementById('profile-display-name').textContent = nameInput.value || 'Usuário';
+/* =========================================================
+   PERFIL DE USUÁRIO
+   ========================================================= */
+function saveProfile(){
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const bio = document.getElementById("bio").value;
+
+    const profileData = { name, email, bio, tags: selectedTags };
+    localStorage.setItem("profileData", JSON.stringify(profileData));
+    document.getElementById("display-name").textContent = name;
 }
 
-// --- Salvar perfil ---
-function saveProfile() {
-    console.log('Perfil salvo:', {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        bio: document.getElementById('bio').value,
-        interests: selectedInterests
-    });
-
-    // Feedback visual
-    ['.save-button','.btn-primary'].forEach(sel => {
-        const btn = document.querySelector(sel);
-        if(btn) {
-            const original = btn.textContent;
-            btn.textContent = 'Salvando...';
-            btn.classList.add('saving');
-            setTimeout(() => {
-                btn.textContent = 'Salvo!';
-                btn.classList.remove('saving');
-                setTimeout(() => btn.textContent = original, 1500);
-            }, 1000);
-        }
-    });
+function loadProfile(){
+    const data = localStorage.getItem("profileData");
+    if(!data) return;
+    const profile = JSON.parse(data);
+    if(profile.name) document.getElementById("name").value = profile.name;
+    if(profile.email) document.getElementById("email").value = profile.email;
+    if(profile.bio) document.getElementById("bio").value = profile.bio;
+    if(profile.tags) selectedTags = profile.tags;
 }
 
-// --- Submissão do formulário ---
-function handleSubmit(event) {
-    event.preventDefault();
+/* =========================================================
+   FEEDBACK VISUAL AO SALVAR
+   ========================================================= */
+function showSuccessFeedback(){
+    const btn = document.querySelector(".b-save_and_go");
+    const originalText = btn.textContent;
+    btn.textContent = "✔ Salvo";
+    btn.style.backgroundColor = "var(--gold)";
+    btn.style.color = "#3E2723";
+
+    setTimeout(()=>{
+        btn.textContent = originalText;
+        btn.style.backgroundColor = "var(--brown-dark)";
+        btn.style.color = "#fff";
+    }, 2000);
+}
+
+
+/* =========================================================
+   REDIRECIONAR AO MAPA
+   ========================================================= */
+document.getElementById("profile-form").addEventListener("submit", function(e){
+    e.preventDefault();   // previne reload da página
     saveProfile();
-}
+    showSuccessFeedback();
 
-// --- Voltar ao login ---
-function goBack() {
-    localStorage.clear();
-    window.location.href = 'index.html';
-}
+    // Redireciona após 1s para o mapa
+    setTimeout(()=> {
+        window.location.href = "maps.html"; // ajuste o caminho
+    }, 1000);
+});
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+window.addEventListener("DOMContentLoaded", ()=>{
+    loadProfile();
+    loadTags();
+});

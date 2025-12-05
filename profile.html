@@ -3,111 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PETRITER - Editar Perfil</title>
+    <title>PETRITER - Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="profile-container">
-        <!-- Header com coroa -->
-        <header class="profile-header">
-            <div class="crown-icon">
-                <svg width="40" height="32" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path 
-                        d="M5 40L10 20L20 30L30 15L40 30L50 20L55 40H5Z" 
-                        stroke="currentColor" 
-                        stroke-width="2" 
-                        fill="none"
-                    />
-                    <circle cx="10" cy="20" r="3" fill="currentColor" />
-                    <circle cx="30" cy="15" r="3" fill="currentColor" />
-                    <circle cx="50" cy="20" r="3" fill="currentColor" />
-                    <path 
-                        d="M5 40H55" 
-                        stroke="currentColor" 
-                        stroke-width="3"
-                    />
-                </svg>
-            </div>
-        </header>
 
-        <!-- Seção principal do perfil -->
-        <div class="profile-section">
-            <!-- Avatar e informações principais -->
-            <div class="profile-top">
-                <div class="avatar-container">
-                    <div class="avatar" id="avatar" onclick="document.getElementById('avatar-upload').click()">
-                        <svg class="avatar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+    <div class="main-container">
+        <div class="profile-card">
+            
+            <!-- LADO ESQUERDO -->
+            <aside class="sidebar">
+                <div class="logo-area">
+                    <img src="Petriter_logo.png" alt="Logo Petríter" class="logo-img">
+                </div>
+
+                <div class="avatar-wrapper">
+                    <div class="avatar" onclick="document.getElementById('avatar-upload').click()">
+                        <div id="avatar-placeholder">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <img id="avatar-img" src="" alt="" style="display: none;">
                     </div>
+                    <input type="file" id="avatar-upload" hidden onchange="handleAvatarUpload(event)">
                 </div>
 
-                <div class="profile-info">
-                    <h1 class="profile-name" id="profile-display-name">Edgard Schmid</h1>
-                    <p class="profile-title">Explorador . Nível 1</p>
+                <div class="user-identity">
+                    <h2 id="display-name">Edgard Schmid</h2>
+                    <p>Explorador • Nível 1</p>
                 </div>
 
-                <button class="save-button" onclick="saveProfile()">
-                    Salvar e navegar!
-                </button>
-            </div>
+                <a href="index.html">
+    <button class="btn-back" onclick="goBack()">Voltar ao Login</button>
+</a>
+            </aside>
 
-            <!-- Formulário de informações -->
-            <form id="profile-form" class="profile-form" onsubmit="handleSubmit(event)">
-                <div class="form-group">
-                    <label for="name">Nome</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        class="form-input" 
-                        value="Edgard Schmid"
-                        placeholder="Nome completo"
-                        required
-                    >
+            <!-- LADO DIREITO -->
+            <main class="content">
+                <div class="header-content">
+                    <h3>Editar Perfil</h3>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        class="form-input" 
-                        value="email123@gmail.com"
-                        placeholder="Seu email"
-                        required
-                    >
-                </div>
+                <form id="profile-form">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="name" value="Edgard Schmid" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="email" value="email123@gmail.com" required>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="bio">Bio</label>
-                    <textarea 
-                        id="bio" 
-                        class="form-textarea" 
-                        placeholder="Conte um pouco sobre você..."
-                        rows="3"
-                    >Gosto de história e natureza</textarea>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label>Bio (Sobre você)</label>
+                        <textarea id="bio" rows="3">Gosto de história e natureza</textarea>
+                    </div>
 
-            <!-- Seção de interesses/tags -->
-            <div class="interests-section">
-                <h3 class="interests-title">Seus interesses</h3>
-                <div class="interests-container" id="interests-container">
-                    <!-- Tags serão geradas dinamicamente -->
-                </div>
-            </div>
-        </div>
+                    <!-- Área de Tags -->
+                    <div class="tags-section">
+                        <h4>Seus Interesses Locais</h4>
+                        <div class="tags-container" id="tags-container"></div>
+                    </div>
 
-        <!-- Botões de navegação -->
-        <div class="profile-actions">
-            <button class="btn-back" onclick="goBack()">
-                Voltar ao login
-            </button>
-            <button class="btn-primary" onclick="saveProfile()">
-                Salvar perfil
-            </button>
+                    <!-- Botão Salvar -->
+                    <div class="action-area">
+                        <button type="submit" class="b-save_and_go">Salvar alterações</button>
+                    </div>
+                </form>
+            </main>
+
         </div>
     </div>
 

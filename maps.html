@@ -1,72 +1,256 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa Histórico de Petrópolis</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petriter</title>
 
-  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<!-- Ícones do Google -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <link rel="stylesheet" href="maps.css">
+<!-- Seu CSS -->
+<link rel="stylesheet" href="maps.css">
 
+<style>
+  /* Garante que o mapa ocupe a altura correta */
+  html, body { height: 100%; margin: 0; padding: 0; }
+  .main-content { height: calc(100vh - 60px); display: flex; }
+  #map-container { flex-grow: 1; position: relative; }
+  #map { width: 100%; height: 100%; background: #e5e3df; }
+</style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="logo-container">
-      <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 16L3 5L8.5 9L12 4L15.5 9L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V18H19V19Z"/>
-      </svg>
+<header class="header">
+  <div class="logo-container">
+    <img src="Petriter_logo.png" alt="Logo Petriter" class="logo-image">
+  </div>
+  <nav class="nav-menu">
+    <a href="historia.html">História</a>
+<a href="pontos_turisticos.html">Pontos Turísticos</a>
+    <a href="#" id="newsButton">Notícias</a>
+    <button id="weatherButton" type="button">Clima</button>
+    <a href="#" id="btn-abrir-filtros">Filtros</a>
+  </nav>
+  <div class="nav-right">
+    <div class="search-bar">
+      <span class="material-symbols-outlined">search</span>
+      <input id="searchInput" type="text" placeholder="Buscar local...">
     </div>
-    <nav class="nav-menu">
-      <a href="#">Informação</a>
-      <a href="#">História</a>
-      <a href="#">Pontos Turísticos</a>
-      <a href="#">Cultura</a>
-      <a href="#">Notícias</a>
-      <button id="weatherButton" type="button">Clima</button>
-      <a href="#">Filtros</a>
-    </nav>
+    <div class="user-actions">
+      <!-- Favoritos / Tags -->
+      <a href="#" class="action-icon" id="favorites">
+        <span class="material-symbols-outlined">star</span>
+      </a>
+
+      <!-- Apenas visual -->
+      <span class="material-symbols-outlined">clock_loader_60</span>
+
+      <!-- Ir para Profile -->
+      <a href="profile.html" class="action-icon" id="go-to-profile">
+        <span class="material-symbols-outlined">account_circle</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Container das notícias fora do header -->
+<div id="newsContainer" class="news-container">
+  <button id="closeNews" class="close-news">X</button>
+  <div id="newsContent">Carregando notícias...</div>
+</div>
+
+<div id="weatherContainer"></div>
+
+<!-- DROPDOWN DE FILTROS -->
+<div id="filter-dropdown" class="filter-dropdown hidden">
+  <div class="dropdown-header">
+    <h4>Filtrar Áreas</h4>
+    <button id="btn-fechar-filtros" class="close-btn">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="dropdown-content">
+    <div id="lista-filtros"></div>
+  </div>
+  <div class="dropdown-footer">
+    <button id="btn-aplicar-filtros" class="btn-primary">Aplicar Filtros</button>
+  </div>
+</div>
+
+<main class="main-content">
+  <div id="map-container">
+    <div id="map"></div>
+    <!-- =============================== -->
+<!-- CARTÃO FLUTUANTE DE PONTO       -->
+<!-- =============================== -->
+<div id="tour-card" class="tour-card" aria-hidden="true">
+  <button class="close-card" id="tour-card-close" title="Fechar">✕</button>
+
+  <div class="media">
+    <div class="icon-top left" id="tour-fav" title="Favoritar">
+      <span class="material-symbols-outlined">star_border</span>
+    </div>
+    <div class="icon-top right" id="tour-add-photo" title="Adicionar fotos">
+      <span class="material-symbols-outlined">photo_camera</span>
+    </div>
+
+    <div class="arrow left" id="tour-prev">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </div>
+    <div class="arrow right" id="tour-next">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </div>
+
+    <img src="" id="tour-image" alt="Imagem do local">
+  </div>
+
+  <div class="content">
+    <div class="title" id="tour-name">Nome do Local</div>
+    <div class="address" id="tour-address">Endereço</div>
+
+    <div class="excerpt" id="tour-excerpt" style="display:none;">
+      Descrição curta.
+    </div>
+
+    <div class="info-row" id="row-hours" style="display:none;">
+      <div class="icon"><span class="material-symbols-outlined">schedule</span></div>
+      <div class="text" id="tour-hours">Horário</div>
+    </div>
+
+    <div class="info-row" id="row-web" style="display:none;">
+      <div class="icon"><span class="material-symbols-outlined">language</span></div>
+      <div class="text" id="tour-web">Website</div>
+    </div>
+
+    <div class="info-row" id="row-phone" style="display:none;">
+      <div class="icon"><span class="material-symbols-outlined">phone</span></div>
+      <div class="text" id="tour-phone">Telefone</div>
+    </div>
+
+    <div class="meta-source">Fonte: Google Maps</div>
+  </div>
+</div>
+
+    <!-- Controles Personalizados -->
+    <!-- ... dentro de <main class="main-content"> ... -->
+<div id="map-container">
+  <div id="map"></div>
+  
+  <!-- O SEU TOUR CARD PERMANECE AQUI (não alterei) -->
+  <div id="tour-card" class="tour-card" aria-hidden="true">
+     <!-- ... conteúdo do card ... -->
+  </div>
+
+  <!-- PAINEL DE INFORMAÇÕES DA ROTA (NOVO) -->
+  <div id="route-info-panel" class="route-panel hidden">
+    <h4>Informações da Rota</h4>
+    <div id="route-data"></div>
+    <button id="btn-save-route" class="btn-small">Salvar Rota</button>
+    <button id="btn-clear-route" class="btn-small btn-danger">Limpar</button>
+  </div>
+
+  <!-- CONTROLES DO MAPA (ATUALIZADO) -->
+  <div class="map-controls">
+    <!-- Funcionalidades Extras -->
+    <div class="control-group">
+      <!-- NOVO BOTÃO IA -->
+      <button id="btn-ai-routes" class="func-btn ai-btn" title="Sugestões Petriter AI"><span class="material-symbols-outlined">smart_toy</span></button>
+    </div>
+    <!-- Tipos de Mapa -->
+    <div class="control-group">
+      <button id="btn-default" class="map-btn active" title="Mapa Padrão">Mapa</button>
+      <button id="btn-satellite" class="satellite-btn" title="Satélite">Satélite</button>
+    </div>
     
-    <div class="nav-right">
-      <div class="search-bar">
-        <span class="material-symbols-outlined">search</span>
-        <input type="text" placeholder="Buscar...">
-      </div>
-      <div class="user-actions">
-        <a href="#" class="action-icon"><span class="material-symbols-outlined">star</span></a>
-        <a href="#" class="action-icon"><span class="material-symbols-outlined">map</span></a>
-        <span class="material-symbols-outlined">clock_loader_60</span>
-        <a href="#" class="action-icon"><span class="material-symbols-outlined">account_circle</span></a>
-      </div>
+    <!-- Funcionalidades Extras -->
+    <div class="control-group">
+      <button id="btn-traffic" class="func-btn" title="Exibir Trânsito"><span class="material-symbols-outlined">traffic</span></button>
+      <button id="btn-route-mode" class="func-btn" title="Criar Rota"><span class="material-symbols-outlined">directions</span></button>
     </div>
-  </header>
+  </div>
+  
+</div>
+<!-- ... -->
+  </div>
 
-  <main class="main-content">
+  <aside class="info-panel">
+    <div class="empty-state">
+      <span class="material-symbols-outlined empty-state-icon">flashlight_off</span>
+      <p>Selecione uma área no filtro...</p>
+    </div>
+  </aside>
+</main>
+
+<!-- MODAL DE SUGESTÕES IA -->
+<div id="ai-modal" class="ai-modal hidden">
+  <div class="ai-header">
+    <h3><span class="material-symbols-outlined">smart_toy</span> Petriter AI</h3>
+    <button id="close-ai-modal" class="close-btn">✕</button>
+  </div>
+  
+  <div class="ai-content">
+    <p class="ai-intro">Com base no seu perfil <strong>(<span id="user-tags-display">...</span>)</strong>, separei 3 roteiros para você:</p>
     
-    <div id="map-container">
-      <div id="map"></div>
-      <div class="map-controls">
-        <button class="map-btn active">Map</button>
+    <div class="routes-container">
+      <!-- Rota 1 -->
+      <div class="route-card" id="route-card-1">
+        <div class="route-header" style="background: var(--d1);">
+          <h4>Opção 1: O Essencial</h4>
+          <span class="badge">Equilibrado</span>
+        </div>
+        <ul class="route-stops" id="list-route-1"></ul>
+        <div class="route-actions">
+          <button onclick="visualizeAIRoute(1)" class="btn-visualize">Ver no Mapa</button>
+          <button onclick="addAllToCustom(1)" class="btn-add-all">+ Adicionar à Minha Rota</button>
+        </div>
+      </div>
+
+      <!-- Rota 2 -->
+      <div class="route-card" id="route-card-2">
+        <div class="route-header" style="background: var(--d2);">
+          <h4>Opção 2: Imersão</h4>
+          <span class="badge">Foco no Interesse</span>
+        </div>
+        <ul class="route-stops" id="list-route-2"></ul>
+        <div class="route-actions">
+          <button onclick="visualizeAIRoute(2)" class="btn-visualize">Ver no Mapa</button>
+          <button onclick="addAllToCustom(2)" class="btn-add-all">+ Adicionar à Minha Rota</button>
+        </div>
+      </div>
+
+      <!-- Rota 3 -->
+      <div class="route-card" id="route-card-3">
+        <div class="route-header" style="background: var(--d3);">
+          <h4>Opção 3: Explorador</h4>
+          <span class="badge">Descobertas</span>
+        </div>
+        <ul class="route-stops" id="list-route-3"></ul>
+        <div class="route-actions">
+          <button onclick="visualizeAIRoute(3)" class="btn-visualize">Ver no Mapa</button>
+          <button onclick="addAllToCustom(3)" class="btn-add-all">+ Adicionar à Minha Rota</button>
+        </div>
       </div>
     </div>
+  </div>
+</div>
+<!-- IMPORTANTE: A ORDEM DOS SCRIPTS FOI CORRIGIDA -->
 
-    <aside class="info-panel">
-      <div class="empty-state">
-        <span class="material-symbols-outlined empty-state-icon">
-          flashlight_off
-        </span>
-        <p>Nenhum elemento...</p>
-      </div>
-    </aside>
+<!-- 1. Carrega primeiro as funções de foto -->
+<script src="photos.js"></script>
 
-  </main>
+<!-- 2. Carrega depois a lógica do mapa -->
+<script src="maps.js"></script>
 
-  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-  <script src="maps.js"></script>
-  <script src="wheather.js"></script>
+<script src="news.js"></script>
+
+<script src="wheather.js"></script>
+
+<!-- 3. Por último, a API do Google (UMA ÚNICA VEZ) -->
+<!-- Adicionei 'loading=async' e 'v=weekly' para corrigir os erros de console -->
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCPypWrP-wkTUKd0m0j2PWNi-YSRcbd6Y&libraries=places&loading=async&v=weekly&callback=initMap">
+</script>
 
 </body>
 </html>

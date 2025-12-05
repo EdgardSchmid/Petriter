@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorar Petrópolis | Petriter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* --- CSS GERAL --- */
+    :root {
+        --primary-color: #8b5e3c;
+        --secondary-color: #c8a97e;
+        --bg-color: #fdf9f2;
+        --card-bg: #fff7f0;
+        --text-color: #4a2c10;
+    }
+
+    body { 
+        font-family: 'Roboto', sans-serif; 
+        background-color: var(--bg-color); 
+        color: var(--text-color); 
+        margin: 0; 
+        padding: 0; 
+    }
+
+    /* Cabeçalho */
+    header { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        background-color: #fff; 
+        border-bottom: 3px solid var(--secondary-color); 
+        padding: 15px 30px; 
+        position: sticky; 
+        top: 0; 
+        z-index: 100; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    header img { height: 50px; cursor: pointer; transition: transform 0.2s; }
+    header img:hover { transform: scale(1.05); }
+
+    main { max-width: 1100px; margin: 40px auto; padding: 0 20px; padding-bottom: 80px; }
+
+    /* Tipografia */
+    h1, h2, h3 { color: var(--primary-color); font-family: 'Playfair Display', serif; }
+    h2 { 
+        font-size: 2.2rem; 
+        margin-bottom: 20px; 
+        border-bottom: 3px solid var(--secondary-color); 
+        display: inline-block; 
+        padding-bottom: 5px; 
+    }
+    p { line-height: 1.8; margin-bottom: 15px; font-size: 1.1rem; color: #555; }
+
+    /* Animação de entrada suave */
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- MENU DE CATEGORIAS --- */
+    .menu-title { text-align: center; font-size: 2.5rem; margin-bottom: 40px; }
+    
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+    }
+
+    .cat-card {
+        position: relative;
+        height: 280px;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.25); }
+
+    .cat-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    .cat-card:hover img { transform: scale(1.1); }
+
+    .cat-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+    }
+
+    .cat-title {
+        position: absolute;
+        bottom: 25px;
+        left: 25px;
+        color: white;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        z-index: 2;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    /* --- PÁGINAS INTERNAS --- */
+    
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 10px 25px;
+        border-radius: 50px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-bottom: 30px;
+        transition: background 0.3s, transform 0.2s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .btn-back:hover { background-color: #6d462b; transform: translateX(-5px); }
+
+    .history-images { display: flex; flex-wrap: wrap; gap: 20px; margin: 30px 0; }
+    .history-images img { 
+        width: calc(50% - 10px); 
+        height: 300px; 
+        object-fit: cover; 
+        border-radius: 12px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+    }
+
+    .service-box {
+        background-color: #fff;
+        border-left: 5px solid var(--secondary-color);
+        padding: 20px;
+        margin: 30px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .service-box h4 { margin-top: 0; color: var(--primary-color); display: flex; align-items: center; gap: 10px; }
+    .service-box ul { list-style: none; padding: 0; margin: 0; }
+    .service-box li { margin-bottom: 8px; font-size: 0.95rem; }
+    .service-box strong { color: var(--text-color); }
+
+    /* --- CARDS DE PESSOAS NOTÁVEIS (MODIFICADO) --- */
+    .notable-people { 
+        display: grid; 
+        /* Aumentei para 340px para o card ficar mais largo */
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 30px; 
+        justify-content: center;
+    }
+    
+    .person-card { 
+        background-color: #fff; 
+        border: 1px solid #e0d0c0; 
+        border-radius: 16px; 
+        overflow: hidden;
+        text-align: center; 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
+        transition: transform 0.3s; 
+    }
+    
+    .person-card:hover { transform: translateY(-8px); }
+    
+    .person-card img {
+      width: 100%;
+      /* Altura automática para mostrar a foto inteira (sem cortar) */
+      height: auto; 
+      /* Define um tamanho máximo para não ficar gigante na tela */
+      max-height: 600px; 
+      object-fit: contain; /* Garante que a imagem inteira apareça */
+      border-bottom: 3px solid var(--secondary-color);
+      background-color: #f7f1e6; /* Cor de fundo caso a imagem seja png transparente ou estreita */
+    }
+
+    .person-info { padding: 20px; }
+    .person-info h3 { margin: 0 0 10px 0; color: var(--primary-color); }
+    .person-info p { font-size: 0.95rem; margin: 0; color: #666; }
+
+    .hidden { display: none; }
+
+    @media (max-width: 768px) { 
+        .history-images img { width: 100%; height: auto; } 
+        header { justify-content: space-between; }
+        .menu-title { font-size: 2rem; }
+        .notable-people { grid-template-columns: 1fr; } /* Em celular fica um abaixo do outro */
+    }
+  </style>
+
+  <script>
+    function showSection(sectionId) {
+        document.getElementById('menu-screen').classList.add('hidden');
+        const pages = document.querySelectorAll('.detail-page');
+        pages.forEach(p => {
+            p.classList.add('hidden');
+            p.classList.remove('fade-in'); 
+        });
+
+        const selected = document.getElementById(sectionId);
+        selected.classList.remove('hidden');
+        selected.classList.add('fade-in'); 
+        window.scrollTo(0,0);
+    }
+
+    function goHome() {
+        const pages = document.querySelectorAll('.detail-page');
+        pages.forEach(p => p.classList.add('hidden'));
+        
+        const menu = document.getElementById('menu-screen');
+        menu.classList.remove('hidden');
+        menu.classList.add('fade-in');
+        window.scrollTo(0,0);
+    }
+  </script>
+</head>
+<body>
+
+  <header>
+    <!-- ALTERADO: Redireciona para maps.html ao clicar -->
+    <img src="Petriter_logo.png" alt="Petriter Logo" onclick="location.href='maps.html'" title="Voltar ao Mapa">
+  </header>
+
+  <main>
+
+    <!-- MENU PRINCIPAL -->
+    <section id="menu-screen" class="fade-in">
+        <h1 class="menu-title">Descubra a Cidade Imperial</h1>
+        <div class="categories-grid">
+            
+            <div class="cat-card" onclick="showSection('page-museu')">
+                <img src="museu-imperial-petropolis-a-noite.jpg" alt="Museus"> 
+                <div class="cat-title">História & Museus</div>
+            </div>
+
+            <div class="cat-card" onclick="showSection('page-igreja')">
+                <img src="catedral-imperial-de-petropolis-conclui-maior-restauro-de-sua-historia_1.jpg" alt="Igrejas">
+                <div class="cat-title">Fé & Arquitetura</div>
+            </div>
+
+            <div class="cat-card" onclick="showSection('page-trilha')">
+                <img src="Amanhecer_no_Hercules_--.jpg" alt="Trilhas">
+                <div class="cat-title">Aventura & Trilhas</div>
+            </div>
+
+            <div class="cat-card" onclick="showSection('page-cerveja')">
+                <img src="download.jpg" alt="Cervejeiro">
+                <div class="cat-title">Rota Cervejeira</div>
+            </div>
+
+            <div class="cat-card" onclick="showSection('page-chocolate')">
+                <img src="chocolate-cacau.jpg" alt="Chocolate">
+                <div class="cat-title">Gastronomia</div>
+            </div>
+
+            <div class="cat-card" onclick="showSection('page-natureza')">
+                <img src="chafariz_praca_liberdade.jpg" alt="Praça da Liberdade">
+                <div class="cat-title">Parques e Jardins</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA: MUSEU -->
+    <section id="page-museu" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Museu Imperial</h2>
+        <p>O Museu Imperial, antiga residência de verão de Dom Pedro II, é o coração histórico de Petrópolis. Construído em estilo neoclássico entre 1845 e 1862, o palácio foi projetado para ser um refúgio da corte contra o calor do Rio de Janeiro. Hoje, ele guarda o maior acervo do império brasileiro, incluindo móveis, documentos e joias.</p>
+        <p>Caminhar por seus corredores é viajar no tempo. O assoalho de madeira nobre exige o uso das famosas "pantufas", que protegem o piso original e se tornaram um símbolo da visitação.</p>
+
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Endereço:</strong> Rua da Imperatriz, 220 - Centro.</li>
+                <li><strong>Horário:</strong> Terça a Domingo, 10h às 18h.</li>
+                <li><strong>Ingresso:</strong> R$ 10,00 (Inteira) / R$ 5,00 (Meia).</li>
+                <li><strong>Dica:</strong> Chegue cedo para ver o show de luzes no jardim (eventual).</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="museu-imperial-petropolis-a-noite.jpg" alt="Museu Imperial">
+            <img src="SALA-DE-MUSICA-2-1024x536.jpg" alt="Interior do Museu">
+        </div>
+
+        <h3>Pessoas Notáveis</h3>
+        <div class="notable-people">
+            <div class="person-card">
+                <img src="Pedro_II_of_Brazil_-_Brady-Handy.jpg" alt="Dom Pedro II">
+                <div class="person-info">
+                    <h3>Dom Pedro II</h3> 
+                    <p>O "Magnânimo". Idealizador do palácio e da cidade, governou o Brasil por quase 50 anos amando esta serra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA: IGREJA -->
+    <section id="page-igreja" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Catedral de São Pedro de Alcântara</h2>
+        <p>Imponente em estilo neogótico francês, a Catedral é um marco da arquitetura religiosa no Brasil. Sua construção começou em 1884, mas só foi finalizada décadas depois. Ela abriga o Mausoléu Imperial, onde repousam os restos mortais de Dom Pedro II, Dona Teresa Cristina, Princesa Isabel e Conde D'Eu.</p>
+        
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Endereço:</strong> Rua São Pedro Alcântara, 60.</li>
+                <li><strong>Visitação:</strong> Diariamente, 08h às 18h.</li>
+                <li><strong>Mausoléu:</strong> Entrada gratuita.</li>
+                <li><strong>Torre:</strong> Possui visita guiada para ver a vista panorâmica (pago à parte).</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="catedral-imperial-de-petropolis-conclui-maior-restauro-de-sua-historia_1.jpg" alt="Catedral">
+            <img src="Untitled.jpg" alt="Mausoléu Imperial">
+        </div>
+
+        <h3>Pessoas Notáveis</h3>
+        <div class="notable-people">
+            <div class="person-card">
+                <img src="Isabel_Princess_Imperial_of_Brazil_c_1887.jpg" alt="Princesa Isabel">
+                <div class="person-info">
+                    <h3>Princesa Isabel</h3> 
+                    <p>Fundamental para a conclusão da obra. Está sepultada no Mausoléu ao lado de seu marido, Conde D'Eu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA: TRILHA -->
+    <section id="page-trilha" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Parque Nacional da Serra dos Órgãos</h2>
+        <p>Para os amantes de trilhas, este é o ponto alto. Criado em 1939, é o terceiro parque mais antigo do país. A unidade de Petrópolis oferece desde caminhadas leves até a famosa Travessia Petrópolis-Teresópolis, considerada uma das mais bonitas do Brasil.</p>
+
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Localização:</strong> Bairro do Bonfim, Corrêas.</li>
+                <li><strong>Destaques:</strong> Cachoeira Véu da Noiva e Pedra do Açu.</li>
+                <li><strong>Nível:</strong> De leve a avançado (exige guia para travessias).</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="dedo.jpg" alt="Dedo de Deus">
+            <img src="imagem_destaque_7142.jpg" alt="Trilha">
+        </div>
+
+        <h3>Pessoas Notáveis</h3>
+        <div class="notable-people">
+            <div class="person-card">
+                <img src="CFPhVonMartius.jpg" alt="Von Martius">
+                <div class="person-info">
+                    <h3>Von Martius</h3> 
+                    <p>Naturalista alemão que explorou e catalogou a rica flora desta região no século XIX.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA: CERVEJA -->
+    <section id="page-cerveja" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Cervejaria Bohemia</h2>
+        <p>Petrópolis é a Capital Estadual da Cerveja, e tudo começou aqui. Fundada em 1853, a Bohemia é a primeira cervejaria do Brasil. O complexo turístico oferece uma experiência interativa que conta a história da bebida desde a antiguidade até a produção moderna.</p>
+
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Endereço:</strong> Rua Alfredo Pachá, 166.</li>
+                <li><strong>Tour:</strong> Experiência interativa com degustação (aprox. 1h30).</li>
+                <li><strong>Restaurante:</strong> No terraço com vista para o Palácio de Cristal.</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="restaurantesempetropolis-vidasem.jpg" alt="Fábrica Bohemia">
+            <img src="Bohemia-2.jpg" alt="Tour Cervejeiro">
+        </div>
+
+        <h3>Pessoas Notáveis</h3>
+        <div class="notable-people">
+            <div class="person-card">
+                <img src="20140818_145135.png" alt="Henrique Kremer">
+                <div class="person-info">
+                    <h3>Henrique Kremer</h3> 
+                    <p>Imigrante alemão visionário e fundador da Cervejaria Bohemia, aproveitando a água pura da serra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PÁGINA: CHOCOLATE -->
+    <section id="page-chocolate" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Tradição do Chocolate (Katz)</h2>
+        <p>O clima frio da serra combina perfeitamente com chocolate. A tradição foi trazida por imigrantes europeus. A Katz Chocolates, fundada em 1953 por uma imigrante alemã, mantém receitas artesanais que se tornaram patrimônio imaterial da cidade.</p>
+
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Onde encontrar:</strong> Rua 16 de Março e em frente ao Relógio das Flores.</li>
+                <li><strong>Imperdível:</strong> Chocolate Quente Europeu e Língua de Gato.</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="das-lokal.jpg" alt="Loja de Chocolate">
+        </div>
+    </section>
+
+    <!-- PÁGINA: NATUREZA (PRAÇA) -->
+    <section id="page-natureza" class="detail-page hidden">
+        <div class="btn-back" onclick="goHome()">&#8592; Voltar ao Menu</div>
+        
+        <h2>Praça da Liberdade</h2>
+        <p>Considerada o coração da vida social de Petrópolis, a Praça da Liberdade (originalmente Largo de Dom Afonso) é um símbolo de transformação. Mais do que um espaço de lazer com árvores centenárias e coreto, o local carrega em seu nome o peso da história social da cidade. Foi nesta região que ocorreram importantes manifestações e encontros que culminaram no fim da escravidão na cidade.</p>
+        
+        <div class="service-box">
+            <h4>📍 Informações Úteis</h4>
+            <ul>
+                <li><strong>Localização:</strong> Av. Koeler - Centro.</li>
+                <li><strong>Atrações Vizinhas:</strong> Museu de Cera e Casa de Santos Dumont.</li>
+                <li><strong>Eventos:</strong> Palco frequente de shows no Natal Imperial.</li>
+            </ul>
+        </div>
+
+        <div class="history-images">
+            <img src="2a28840794377266a2782491c5c65c1d.png" alt="Praça da Liberdade">
+            <img src="1024px-Palácio_de_Cristal_Petróp.png" alt="Palácio de Cristal ao fundo">
+        </div>
+
+        <h3>Pessoas Notáveis</h3>
+        <div class="notable-people">
+            <div class="person-card">
+                <img src="Isabel_Princess_Imperial_of_Brazil_c_1887.jpg" alt="Princesa Isabel">
+                <div class="person-info">
+                    <h3>Princesa Isabel</h3>
+                    <p>A Redentora. Frequentava a região e, no Palácio de Cristal (ao lado), entregou cartas de alforria.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  </main>
+</body>
+</html>

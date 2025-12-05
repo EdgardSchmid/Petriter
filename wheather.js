@@ -1,87 +1,146 @@
-// ===============================
-// === CONFIGURAÇÃO DO CLIMA =====
-// ===============================
-const OWM_API_KEY = "bf750366270e78f3f93e96d550a5627a"; // 🔑 coloque sua chave do OpenWeatherMap
-const LAT = -22.5046;
-const LON = -43.1823;
+document.addEventListener("DOMContentLoaded", function() {
+    // ===============================
+    // === CONFIGURAÇÃO DO CLIMA =====
+    // ===============================
+    const OWM_API_KEY = "bf750366270e78f3f93e96d550a5627a"; // Sua chave
+    const LAT = -22.5046;
+    const LON = -43.1823;
 
-// Classe para criar a caixinha de clima
-function WeatherControl() {
-  this._container = null;
-}
-WeatherControl.prototype.onAdd = function(map) {
-  this._map = map;
-  this._container = document.createElement('div');
-  this._container.className = 'weather-box maplibregl-ctrl maplibregl-ctrl-group'; // Adicionado classes do MapLibre para estilização
-  this._container.innerHTML = "<div>Carregando clima...</div>";
-  
-  // Estilos para a caixa de clima parecer um controle do mapa
-  this._container.style.backgroundColor = 'white';
-  this._container.style.padding = '10px';
-  this._container.style.borderRadius = '4px';
-  this._container.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
-  this._container.style.textAlign = 'center';
+    // Elementos do DOM
+    const weatherButton = document.getElementById('weatherButton');
+    const mapContainer = document.getElementById('map-container'); 
+    
+    let weatherBox = null; 
+    let isVisible = false;
+    
+    // NOTA: A função formatTime não é mais necessária, pois usaremos um texto estático.
 
-  // Impede que clique na caixa interfira no mapa
-  this._container.style.pointerEvents = "auto";
-  return this._container;
-};
-WeatherControl.prototype.onRemove = function() {
-  this._container.parentNode.removeChild(this._container);
-  this._map = undefined;
-};
-WeatherControl.prototype.update = function(data) {
-  if (data.error) {
-    this._container.innerHTML = `<div><b>Erro:</b> ${data.error}</div>`;
-    return;
-  }
-  this._container.innerHTML = `
-    <div style="font-weight: bold;">Clima em Petrópolis</div>
-    <div>${data.temp.toFixed(1)}°C — ${data.desc}</div>
-    <img src="${data.icon}" alt="${data.desc}" style="width: 50px; height: 50px;">
-  `;
-};
+    // ===============================
+    // === 1. CRIAR A CAIXINHA =======
+    // ===============================
+    function createWeatherBox() {
+        const div = document.createElement('div');
+        div.id = 'weather-box-id'; 
+        div.className = 'weather-box'; 
+        div.innerHTML = "<div>Buscando dados...</div>";
+        div.style.display = 'none'; 
+        
+        if (mapContainer) {
+            mapContainer.appendChild(div);
+        } else {
+            console.error("ERRO: #map-container não encontrado no HTML");
+            document.body.appendChild(div); 
+        }
+        return div;
+    }
 
-// ===============================
-// === BOTÃO CLIMA ===============
-// ===============================
-const weatherButton = document.getElementById('weatherButton');
-let weatherControl = null;
-let isWeatherVisible = false;
+    // ===============================
+    // === 2. ATUALIZAR O HTML =======
+    // ===============================
+    function updateUI(currentData, nextForecast) {
+        if (!weatherBox) return;
 
-weatherButton.addEventListener('click', async () => {
-  if (!isWeatherVisible) {
-    weatherControl = new WeatherControl();
-    // Adiciona no mapa global (MapLibre já existe em maps.js)
-    map.addControl(weatherControl, 'top-right');
-    await loadWeather();
-    isWeatherVisible = true;
-  } else {
-    map.removeControl(weatherControl);
-    weatherControl = null;
-    isWeatherVisible = false;
-  }
+        if (currentData.error) {
+            weatherBox.innerHTML = `<div style="color:red; font-weight:bold;">⚠️ ${currentData.error}</div>`;
+            return;
+        }
+
+        let htmlContent = `
+            <div style="font-size: 10px; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
+                Petrópolis, RJ
+            </div>
+            
+            <div style="display: flex; justify-content: space-around; gap: 15px; text-align: center;">
+                
+                <div style="flex: 1; border-right: 1px solid #eee; padding-right: 15px;">
+                    <div style="font-size: 10px; color: #555; font-weight: bold; margin-bottom: 5px;">AGORA</div>
+                    <img src="${currentData.icon}" alt="${currentData.desc}" style="width: 45px; height: 45px; margin-bottom: 3px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #333; line-height: 1;">${Math.round(currentData.temp)}°C</div>
+                    <div style="font-size: 11px; color: #555; text-transform: capitalize; margin-top: 5px;">${currentData.desc}</div>
+                </div>
+
+                <div style="flex: 1;">
+                    ${nextForecast ? `
+                        <div style="font-size: 10px; color: #555; font-weight: bold; margin-bottom: 5px;">PRÓXIMAS 3 HORAS</div>
+                        <img src="${nextForecast.icon}" alt="${nextForecast.desc}" style="width: 45px; height: 45px; margin-bottom: 3px;">
+                        <div style="font-size: 18px; font-weight: 700; color: #333; line-height: 1;">${Math.round(nextForecast.temp)}°C</div>
+                        <div style="font-size: 11px; color: #555; text-transform: capitalize; margin-top: 5px;">${nextForecast.desc}</div>
+                    ` : `<div style="font-size:11px; color:#999; padding-top:10px;">Sem previsão.</div>`}
+                </div>
+            </div>
+        `;
+
+        weatherBox.innerHTML = htmlContent;
+    }
+
+    // ===============================
+    // === 3. BUSCAR DADOS (API) =====
+    // ===============================
+    async function fetchWeatherData() {
+        let currentData = { error: "Erro desconhecido" };
+        let nextForecast = null;
+
+        try {
+            // 3.1. Busca Clima Atual
+            const currentUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&lang=pt_br&appid=${OWM_API_KEY}`;
+            const currentRes = await fetch(currentUrl);
+            const currentJson = await currentRes.json();
+            
+            if (!currentRes.ok) throw new Error(`Erro API Clima: ${currentJson.message}`);
+            
+            currentData = {
+                temp: currentJson.main.temp,
+                desc: currentJson.weather[0].description,
+                icon: `https://openweathermap.org/img/wn/${currentJson.weather[0].icon}@2x.png`
+            };
+            
+            // 3.2. Busca Previsão 5 dias (usaremos apenas o primeiro item futuro)
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&units=metric&lang=pt_br&appid=${OWM_API_KEY}`;
+            const forecastRes = await fetch(forecastUrl);
+            const forecastJson = await forecastRes.json();
+
+            if (forecastRes.ok && forecastJson.list && forecastJson.list.length > 0) {
+                // O primeiro item na lista (index 0) é a previsão mais próxima,
+                // que geralmente é a de 3 horas.
+                const nextItem = forecastJson.list[0]; 
+                
+                nextForecast = {
+                    // Removido o timestamp
+                    temp: nextItem.main.temp,
+                    desc: nextItem.weather[0].description,
+                    icon: `https://openweathermap.org/img/wn/${nextItem.weather[0].icon}@2x.png`
+                };
+            }
+
+            // 3.3. Atualiza a UI
+            updateUI(currentData, nextForecast);
+
+        } catch (error) {
+            console.error(error);
+            updateUI({ error: error.message || "Falha ao carregar dados do clima." }, null);
+        }
+    }
+
+    // ===============================
+    // === 4. EVENTO DE CLIQUE =======
+    // ===============================
+    if (weatherButton) {
+        weatherButton.addEventListener('click', () => {
+            if (!weatherBox) {
+                weatherBox = createWeatherBox();
+                fetchWeatherData(); // Busca Clima Atual e Previsão
+            }
+
+            // Alterna visibilidade
+            if (isVisible) {
+                weatherBox.style.display = 'none';
+                weatherButton.innerHTML = "Clima";
+                isVisible = false;
+            } else {
+                weatherBox.style.display = 'block'; // Mostra
+                weatherButton.innerHTML = "Fechar Clima";
+                isVisible = true;
+            }
+        });
+    }
 });
-
-// ===============================
-// === FUNÇÃO PARA BUSCAR DADOS ===
-// ===============================
-async function loadWeather() {
-  try {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&lang=pt_br&appid=${OWM_API_KEY}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Erro " + res.status);
-    const data = await res.json();
-
-    const clima = {
-      temp: data.main.temp,
-      desc: data.weather[0].description,
-      icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
-    };
-
-    weatherControl.update(clima);
-
-  } catch (err) {
-    weatherControl.update({ error: err.message });
-  }
-}

@@ -326,3 +326,7 @@ body {
         padding: 1rem;
     }
 }
+
+.branding-section .logo-image {
+    width: 120px;
+}
